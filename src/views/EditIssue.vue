@@ -33,6 +33,14 @@
           required
         ></b-form-select>
       </b-form-group>
+      <b-form-group id="input-group-3" label="Prioritat:" label-for="input-3">
+        <b-form-select
+          id="input-3"
+          v-model="form.prioritat"
+          :options="prioritat"
+          required
+        ></b-form-select>
+      </b-form-group>
 
       <b-form-group id="input-group-4">
         <b-form-checkbox-group v-model="form.checked" id="checkboxes-4">
@@ -58,8 +66,10 @@
           titol: '',
           descripcio: '',
           tipus: null,
+          prioritat: null,
           checked: []
         },
+        prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
         tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
         show: true
       }
@@ -75,6 +85,7 @@
         this.form.titol = ''
         this.form.descripcio = ''
         this.form.tipus = null
+        this.form.prioritat = null
         this.form.checked = []
         // Trick to reset/clear native browser form validation state
         this.show = false
