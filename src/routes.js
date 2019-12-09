@@ -1,6 +1,7 @@
 import Issues from './views/Issues.vue';
 import Issue from './views/Issue.vue';
 import CreateIssue from './views/CreateIssue.vue';
+import EditIssue from './views/EditIssue.vue'
 
 const routes = [
 	{
@@ -22,7 +23,13 @@ const routes = [
 		path: '/issues/:id',
 		name: 'Issue',
 		component: Issue
+	},
+	{
+		path: '/issues/:id/edit',
+		name: 'Edit Issue',
+		component: EditIssue
 	}
+
 ];
 
 export default routes;
