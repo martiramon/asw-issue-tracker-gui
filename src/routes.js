@@ -18,8 +18,7 @@ const routes = [
 		component: CreateIssue
 	},
 	{
-		/* Aquest tambe tindra el html del edit issue, amb un bool de mode edicio/vista mostrarem una part o una altre */
-		path: '/issues/:id',
+		path: '/issues/:id/',
 		name: 'Issue',
 		component: Issue
 	}

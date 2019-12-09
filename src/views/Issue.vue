@@ -20,18 +20,47 @@
           <b-col>
             <b-form class="mx-auto" @submit="postComment">
               <b-form-textarea placeholder="Escriu aquí el teu comentari" v-model="comentari" />
-
               <div class="mt-3 float-right">
-                <base-button
+                <button
                   class="btn btn-primary mb-3"
                   type="primary"
                   native-type="submit"
-                >Save changes</base-button>
+                >Save changes</button>
               </div>
             </b-form>
           </b-col>
         </b-row>
 
+        <!-- Afegir comentari al canvi de status -->
+        <b-modal id="modalStatus" hide-footer hide-header>
+          <div>
+            <b-form-textarea
+              id="textarea"
+              v-model="changeStatus.comentari"
+              placeholder="Afegeix un comentari"
+              rows="3"
+              max-rows="6"
+            ></b-form-textarea>
+          </div>
+
+          <div class="mt-3">
+            <button type="button" class="btn btn-primary mr-3" @click="resetStatusComment()">Cancela</button>
+            <button type="button" class="btn btn-success" @click="updateStatus()">Guarda</button>
+          </div>
+        </b-modal>
+        <!-- Confirmacio del delete -->
+        <b-modal id="modalDelete" hide-footer hide-header>
+          Estas segur que vols esborrar el comentari?
+          <br />
+          <div class="mt-3">
+            <button
+              type="button"
+              class="btn btn-primary mr-3"
+              @click="$bvModal.hide('modalDelete')"
+            >Cancela</button>
+            <button type="button" class="btn btn-danger" @click="deleteComment()">Esborra</button>
+          </div>
+        </b-modal>
         <b-col class="mx-auto" v-for="(comment) in comments2" :key="comment.id" :id="comment.id">
           <b-row>
             <p>
@@ -41,10 +70,14 @@
             </p>
           </b-row>
 
-          <b-row :id="comments-actions-menu">
+          <b-row>
             <!-- user-only visible content-->
-            <!-- posar aqui un modal bonic per la confirmacio -->
-            <button type="button" class="btn btn-link">Esborra</button>
+            <button
+              v-b-modal.modalDelete
+              @click="confirmDelete(comment.id)"
+              type="button"
+              class="btn btn-link"
+            >Esborra</button>
             <button type="button" class="btn btn-link">Edita</button>
             <!-- public content-->
             <button type="button" class="btn btn-text">{{comment.data_creacio}}</button>
@@ -53,7 +86,23 @@
         </b-col>
       </div>
       <div class="col-lg-4">
-        <div>
+        <b-row class="mb-3 mx-auto">
+          <b-button-group>
+            <b-dropdown text="Status">
+              <b-dropdown-item
+                v-for="option in status"
+                :key="option"
+                :value="option"
+                @click="commentStatus(option)"
+              >{{option}}</b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown text="Més">
+              <b-dropdown-item>Adjunteu fitxer</b-dropdown-item>
+            </b-dropdown>
+            <b-button variant="primary">Inici</b-button>
+          </b-button-group>
+        </b-row>
+        <b-row class="mx-auto">
           <b-card>
             <b-card-text>
               <b>Assignat:</b>
@@ -76,7 +125,7 @@
               <br />
             </b-card-text>
           </b-card>
-        </div>
+        </b-row>
       </div>
     </div>
   </div>
@@ -84,9 +133,25 @@
 
 <script>
 import axios from "axios";
+
 export default {
   data() {
     return {
+      status: [
+        "Nou",
+        "Obert",
+        "Resolt",
+        "Espera",
+        "Invalit",
+        "Duplicat",
+        "NoFix",
+        "Tancat"
+      ],
+      selectedDelete: 0,
+      changeStatus: {
+        selectedStatus: "",
+        statusComment: ""
+      },
       comentari: "", //camp per guardar el comentari quan toqui
       issue: null,
       // issue per testejar la gui, la que s'ha de fer servir es la que es diu 'issue' que s'obte amb request
@@ -147,10 +212,32 @@ export default {
           return response.data;
         });
     },
+    /*  API CALLS  */
     getComments: async function() {},
     postComment: async function() {},
-    editComment: async function(/*cid*/) {},
-    deleteComment: async function(/*cid*/) {}
+    editComment: async function() {},
+    deleteComment: async function() {
+      /*API CALL HERE*/
+      this.$bvModal.hide("modalDelete");
+      this.selectedDelete = 0;
+    },
+    updateStatus: async function() {
+      /*API CALL*/
+      this.resetStatusComment();
+      this.getIssue();
+    },
+    /*  MODAL TOGGLE  */
+    confirmDelete: function(cid) {
+      this.selectedDelete = cid;
+    },
+    commentStatus: function(option) {
+      this.changeStatus.status = option;
+      this.$bvModal.show("modalStatus");
+    },
+    resetStatusComment: function() {
+      this.$bvModal.hide("modalStatus");
+      this.changeStatus.comentari = "";
+    }
   },
   mounted() {
     this.getIssue();
