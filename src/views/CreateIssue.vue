@@ -62,6 +62,7 @@ import axios from "axios";
           descripcio: '',
           tipus: null,
           prioritat: null
+          
         },
         prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
         tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
@@ -69,7 +70,9 @@ import axios from "axios";
       }
     },
     methods: {
-      postIssue: async function() {
+      onSubmit: async function(evt){
+        evt.preventDefault()
+        alert(JSON.stringify(this.form))
         axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
         // hauria de posar aqui les credencials i tal
         await axios
@@ -82,10 +85,6 @@ import axios from "axios";
             return response.data;
           });
       },
-      onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
-      },
       onReset(evt) {
         evt.preventDefault()
         // Reset our form values
@@ -93,6 +92,7 @@ import axios from "axios";
         this.form.descripcio = ''
         this.form.tipus = null
         this.form.prioritat = null
+
         // Trick to reset/clear native browser form validation state
         this.show = false
         this.$nextTick(() => {
