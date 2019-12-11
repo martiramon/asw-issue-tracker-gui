@@ -1,11 +1,7 @@
 <template>
   <div class="container mt-4">
     <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-      <b-form-group
-        id="input-group-1"
-        label="Títol:"
-        label-for="input-1"
-      >
+      <b-form-group id="input-group-1" label="Títol:" label-for="input-1">
         <b-form-input
           id="input-1"
           v-model="form.titol"
@@ -59,40 +55,53 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        form: {
-          titol: '',
-          descripcio: '',
-          tipus: null,
-          prioritat: null,
-          checked: []
-        },
-        prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
-        tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
-        show: true
-      }
-    },
-    methods: {
-      onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
+export default {
+  data() {
+    return {
+      form: {
+        titol: "",
+        descripcio: "",
+        tipus: null,
+        prioritat: null,
+        checked: []
       },
-      onReset(evt) {
-        evt.preventDefault()
-        // Reset our form values
-        this.form.titol = ''
-        this.form.descripcio = ''
-        this.form.tipus = null
-        this.form.prioritat = null
-        this.form.checked = []
-        // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
-      }
+      prioritat: [
+        { text: "Tria'n una", value: null },
+        "Trivial",
+        "Menor",
+        "Major",
+        "Crítica",
+        "Bloquejant"
+      ],
+      tipus: [
+        { text: "Tria'n un", value: null },
+        "Bug",
+        "Millora",
+        "Proposta",
+        "Tasca"
+      ],
+      show: true
+    };
+  },
+  methods: {
+    onSubmit(evt) {
+      evt.preventDefault();
+      alert(JSON.stringify(this.form));
+    },
+    onReset(evt) {
+      evt.preventDefault();
+      // Reset our form values
+      this.form.titol = "";
+      this.form.descripcio = "";
+      this.form.tipus = null;
+      this.form.prioritat = null;
+      this.form.checked = [];
+      // Trick to reset/clear native browser form validation state
+      this.show = false;
+      this.$nextTick(() => {
+        this.show = true;
+      });
     }
   }
+};
 </script>

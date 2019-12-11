@@ -2,20 +2,19 @@
   <div class="container mt-5">
     <div class="row">
       <div class="col-lg-8">
-        <!-- Issue -->
         <h4>
-          Issue {{issue2.id}}
-          <b-badge>{{issue2.tipus}}</b-badge>
+          Issue {{ issue2.id }}
+          <b-badge>{{ issue2.tipus }}</b-badge>
         </h4>
-        <h1>{{issue2.titol}}</h1>
+        <h1>{{ issue2.titol }}</h1>
         <p>
-          <b>{{issue2.creator}}</b>
-          created an issue on {{issue2.data_creacio}}
+          <b>{{ issue2.creator }}</b>
+          created an issue on {{ issue2.data_creacio }}
         </p>
-        <p>{{issue2.descripcio}}</p>
+        <p>{{ issue2.descripcio }}</p>
         <hr />
         <!-- Comentaris -->
-        <h5>Comentaris ({{comments2.length}})</h5>
+        <h5>Comentaris ({{ comments2.length }})</h5>
         <b-row>
           <b-col>
             <b-form class="mx-auto" @submit="postComment">
@@ -61,12 +60,12 @@
             <button type="button" class="btn btn-danger" @click="deleteComment()">Esborra</button>
           </div>
         </b-modal>
-        <b-col class="mx-auto" v-for="(comment) in comments2" :key="comment.id" :id="comment.id">
+        <b-col class="mx-auto" v-for="comment in comments2" :key="comment.id" :id="comment.id">
           <b-row>
             <p>
-              <b>{{comment.owner}}</b>
+              <b>{{ comment.owner }}</b>
               <br />
-              {{comment.content}}
+              {{ comment.content }}
             </p>
           </b-row>
 
@@ -78,10 +77,33 @@
               type="button"
               class="btn btn-link"
             >Esborra</button>
-            <button type="button" class="btn btn-link">Edita</button>
+            <button
+              type="button"
+              class="btn btn-link"
+              :id="comment.id"
+              @click="displayEditComment(comment.content)"
+            >Edita</button>
             <!-- public content-->
-            <button type="button" class="btn btn-text">{{comment.data_creacio}}</button>
+            <button type="button" class="btn btn-text">{{ comment.data_creacio }}</button>
           </b-row>
+
+          <div :id="'elem'+comment.id" style="display: none;">
+            <b-form-textarea id="textarea" v-model="commentcontentaux" rows="3" max-rows="6"></b-form-textarea>
+            <div class="mt-3">
+              <b-button
+                type="button"
+                class="btn btn-primary mr-3"
+                :id="comment.id"
+                @click="hideEditComment()"
+              >Cancela</b-button>
+              <b-button
+                type="button"
+                class="btn btn-success"
+                @click="editComment(comment.id, comment.content)"
+              >Guarda</b-button>
+            </div>
+          </div>
+
           <hr />
         </b-col>
       </div>
@@ -94,7 +116,7 @@
                 :key="option"
                 :value="option"
                 @click="commentStatus(option)"
-              >{{option}}</b-dropdown-item>
+              >{{ option }}</b-dropdown-item>
             </b-dropdown>
             <b-dropdown text="Més">
               <b-dropdown-item>Adjunteu fitxer</b-dropdown-item>
@@ -106,22 +128,22 @@
           <b-card>
             <b-card-text>
               <b>Assignat:</b>
-              {{issue2.assignee}}
+              {{ issue2.assignee }}
               <br />
               <b>Tipus:</b>
-              {{issue2.tipus}}
+              {{ issue2.tipus }}
               <br />
               <b>Prioritat:</b>
-              {{issue2.prioritat}}
+              {{ issue2.prioritat }}
               <br />
               <b>Estat:</b>
-              {{issue2.status}}
+              {{ issue2.status }}
               <br />
               <b>Vots:</b>
-              {{issue2.vote_set}}
+              {{ issue2.vote_set }}
               <br />
               <b>Watchers:</b>
-              {{issue2.watch_set}}
+              {{ issue2.watch_set }}
               <br />
             </b-card-text>
           </b-card>
@@ -147,6 +169,7 @@ export default {
         "NoFix",
         "Tancat"
       ],
+      commentcontentaux: "",
       selectedDelete: 0,
       changeStatus: {
         selectedStatus: "",
@@ -215,7 +238,7 @@ export default {
     /*  API CALLS  */
     getComments: async function() {},
     postComment: async function() {},
-    editComment: async function() {},
+    editComment: async function(/*commentid, commentcontent*/) {},
     deleteComment: async function() {
       /*API CALL HERE*/
       this.$bvModal.hide("modalDelete");
@@ -237,6 +260,16 @@ export default {
     resetStatusComment: function() {
       this.$bvModal.hide("modalStatus");
       this.changeStatus.comentari = "";
+    },
+    displayEditComment: function(c) {
+      var commentid = event.currentTarget.getAttribute("id");
+      document.getElementById("elem" + commentid).style.display = "block";
+      this.commentcontentaux = c;
+    },
+    hideEditComment: function() {
+      var commentid = event.currentTarget.getAttribute("id");
+      document.getElementById("elem" + commentid).style.display = "none";
+      this.commentcontentaux = "";
     }
   },
   mounted() {
@@ -245,4 +278,3 @@ export default {
   }
 };
 </script>
-
