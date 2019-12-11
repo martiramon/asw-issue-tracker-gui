@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
   export default {
     data() {
       return {
@@ -67,6 +69,19 @@
       }
     },
     methods: {
+      postIssue: async function() {
+        axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+        // hauria de posar aqui les credencials i tal
+        await axios
+          .post(
+            "https://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+              this.$router.id
+          )
+          .then(response => {
+            this.issue = response.data;
+            return response.data;
+          });
+      },
       onSubmit(evt) {
         evt.preventDefault()
         alert(JSON.stringify(this.form))
