@@ -42,13 +42,6 @@
         ></b-form-select>
       </b-form-group>
 
-      <b-form-group id="input-group-4">
-        <b-form-checkbox-group v-model="form.checked" id="checkboxes-4">
-          <b-form-checkbox value="me">Check me out</b-form-checkbox>
-          <b-form-checkbox value="that">Check that out</b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-
       <b-button type="submit" variant="primary">Crea l'issue</b-button>
       <b-button type="reset" variant="danger">Descartar</b-button>
     </b-form>
@@ -66,8 +59,7 @@
           titol: '',
           descripcio: '',
           tipus: null,
-          prioritat: null,
-          checked: []
+          prioritat: null
         },
         prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
         tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
@@ -86,7 +78,6 @@
         this.form.descripcio = ''
         this.form.tipus = null
         this.form.prioritat = null
-        this.form.checked = []
         // Trick to reset/clear native browser form validation state
         this.show = false
         this.$nextTick(() => {
