@@ -121,7 +121,7 @@
             <b-dropdown text="Més">
               <b-dropdown-item>Adjunteu fitxer</b-dropdown-item>
             </b-dropdown>
-            <b-button variant="primary">Inici</b-button>
+            <b-button href="#/issues" variant="primary">Inici</b-button>
           </b-button-group>
         </b-row>
         <b-row class="mx-auto">
