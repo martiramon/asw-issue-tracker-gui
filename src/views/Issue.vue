@@ -183,7 +183,7 @@ export default {
   },
   methods: {
     getIssue: async function() {
-      axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+      //axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
       // hauria de posar aqui les credencials i tal
       await axios
         .get(
@@ -196,7 +196,7 @@ export default {
         });
     },
     getComments: async function() {
-      axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+      //axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
       // hauria de posar aqui les credencials i tal
       await axios
         .get(
@@ -209,8 +209,6 @@ export default {
         });
     },
     postComment: async function() {
-      axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
-
       // hauria de posar aqui les credencials i tal
       await axios
         .post(
@@ -223,7 +221,7 @@ export default {
           {
             headers: {
               "content-type": "application/json",
-              authorization: "token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
             }
           }
         )
