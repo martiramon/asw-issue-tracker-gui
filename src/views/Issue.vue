@@ -208,7 +208,30 @@ export default {
           return response.data;
         });
     },
-    postComment: async function() {},
+    postComment: async function() {
+      axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+
+      // hauria de posar aqui les credencials i tal
+      await axios
+        .post(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
+          {
+            issue: this.$route.params.id,
+            content: this.comentari,
+            adjunt: null
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+              authorization: "token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            }
+          }
+        )
+        .then(response => {
+          this.getComments();
+          return response.data;
+        });
+    },
     editComment: async function(/*commentid, commentcontent*/) {},
     deleteComment: async function() {
       /*API CALL HERE*/
