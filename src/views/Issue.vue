@@ -183,7 +183,6 @@ export default {
   },
   methods: {
     getIssue: async function() {
-      //axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
       // hauria de posar aqui les credencials i tal
       await axios
         .get(
@@ -196,7 +195,6 @@ export default {
         });
     },
     getComments: async function() {
-      //axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
       // hauria de posar aqui les credencials i tal
       await axios
         .get(
