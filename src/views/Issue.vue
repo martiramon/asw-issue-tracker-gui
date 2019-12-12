@@ -140,10 +140,10 @@
               {{ issue.status }}
               <br />
               <b>Vots:</b>
-              {{ issue.vote_set }}
+              {{ issue.vote_set.length }}
               <br />
               <b>Watchers:</b>
-              {{ issue.watch_set }}
+              {{ issue.watch_set.lenght }}
               <br />
             </b-card-text>
           </b-card>
@@ -228,7 +228,26 @@ export default {
           return response.data;
         });
     },
-    editComment: async function(/*commentid, commentcontent*/) {},
+    editComment: async function(commentid, commentcontent) {
+      await axios
+        .put(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
+          {
+            id: commentid,
+            content: commentcontent
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            }
+          }
+        )
+        .then(response => {
+          this.getComments();
+          return response.data;
+        });
+    },
     deleteComment: async function() {
       /*API CALL HERE*/
       await axios.delete(
