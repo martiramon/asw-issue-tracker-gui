@@ -33,13 +33,20 @@
           required
         ></b-form-select>
       </b-form-group>
-      <b-form-group id="input-group-3" label="Prioritat:" label-for="input-3">
+      <b-form-group id="input-group-4" label="Prioritat:" label-for="input-4">
         <b-form-select
-          id="input-3"
+          id="input-4"
           v-model="form.prioritat"
           :options="prioritat"
           required
         ></b-form-select>
+      </b-form-group>
+      <b-form-group id="input-group-5" label="Assignat:" label-for="input-5">
+        <b-form-select v-model="form.assignee">
+          <option v-for="item in users" :value="item.id" :key="item.id">
+            {{ item.username }}
+          </option>
+        </b-form-select>
       </b-form-group>
 
       <b-button type="submit" variant="primary">Crea l'issue</b-button>
@@ -61,11 +68,16 @@ import axios from "axios";
           titol: '',
           descripcio: '',
           tipus: null,
-          prioritat: null
-          
+          prioritat: null,
+          assignee: null
         },
         prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
         tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
+        users: [],
+        user: {
+          id: null,
+          username: null
+        },
         show: true
       }
     },
@@ -73,14 +85,17 @@ import axios from "axios";
       onSubmit: async function(evt){
         evt.preventDefault()
         alert(JSON.stringify(this.form))
-        axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
         // hauria de posar aqui les credencials i tal
         await axios
           .post(
-            "https://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
-              this.$router.id
-          )
-          .then(response => {
+            "https://asw-issue-tracker-2019.herokuapp.com/api/issues/",
+            this.form,
+            {
+              headers: {
+                'Authorization': 'Token a86c3b4efbcc61ed92d7f49d229be544c4d32f43'
+              }
+            }
+          ).then(response => {
             this.issue = response.data;
             return response.data;
           });
@@ -98,7 +113,22 @@ import axios from "axios";
         this.$nextTick(() => {
           this.show = true
         })
-      }
-    }
+      },
+      getUser: async function() {
+        // hauria de posar aqui les credencials i tal
+        await axios
+          .get(
+            "https://asw-issue-tracker-2019.herokuapp.com/api/user/"
+          )
+          .then(response =>{
+                        this.users = response.data
+                    })
+          }
+        },
+  mounted() {
+      this.getUser();
   }
+};
+
+
 </script>
