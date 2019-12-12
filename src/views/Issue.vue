@@ -3,18 +3,18 @@
     <div class="row">
       <div class="col-lg-8">
         <h4>
-          Issue {{ issue2.id }}
-          <b-badge>{{ issue2.tipus }}</b-badge>
+          Issue {{ issue.id }}
+          <b-badge>{{ issue.tipus }}</b-badge>
         </h4>
-        <h1>{{ issue2.titol }}</h1>
+        <h1>{{ issue.titol }}</h1>
         <p>
-          <b>{{ issue2.creator }}</b>
-          created an issue on {{ issue2.data_creacio }}
+          <b>{{ issue.creator }}</b>
+          created an issue on {{ issue.data_creacio }}
         </p>
-        <p>{{ issue2.descripcio }}</p>
+        <p>{{ issue.descripcio }}</p>
         <hr />
         <!-- Comentaris -->
-        <h5>Comentaris ({{ comments2.length }})</h5>
+        <h5>Comentaris ({{ comments.length }})</h5>
         <b-row>
           <b-col>
             <b-form class="mx-auto" @submit="postComment">
@@ -60,7 +60,7 @@
             <button type="button" class="btn btn-danger" @click="deleteComment()">Esborra</button>
           </div>
         </b-modal>
-        <b-col class="mx-auto" v-for="comment in comments2" :key="comment.id" :id="comment.id">
+        <b-col class="mx-auto" v-for="comment in comments" :key="comment.id" :id="comment.id">
           <b-row>
             <p>
               <b>{{ comment.owner }}</b>
@@ -128,22 +128,22 @@
           <b-card>
             <b-card-text>
               <b>Assignat:</b>
-              {{ issue2.assignee }}
+              {{ issue.assignee }}
               <br />
               <b>Tipus:</b>
-              {{ issue2.tipus }}
+              {{ issue.tipus }}
               <br />
               <b>Prioritat:</b>
-              {{ issue2.prioritat }}
+              {{ issue.prioritat }}
               <br />
               <b>Estat:</b>
-              {{ issue2.status }}
+              {{ issue.status }}
               <br />
               <b>Vots:</b>
-              {{ issue2.vote_set }}
+              {{ issue.vote_set }}
               <br />
               <b>Watchers:</b>
-              {{ issue2.watch_set }}
+              {{ issue.watch_set }}
               <br />
             </b-card-text>
           </b-card>
@@ -176,48 +176,8 @@ export default {
         statusComment: ""
       },
       comentari: "", //camp per guardar el comentari quan toqui
-      issue: null,
+      issue: {},
       // issue per testejar la gui, la que s'ha de fer servir es la que es diu 'issue' que s'obte amb request
-      issue2: {
-        id: 10,
-        titol: "Test Issue",
-        descripcio:
-          "DESCRIPCIO ISSUE skdnvksndvklsndvlks knvsdlksnvlkdsnvlks dkvnslkdmslkndvlksndlkvs nvdks nvdlksnvlkndsvdsnlk",
-        data_creacio: "2019-12-05",
-        creator: "Aina Garcia",
-        assignee: "Marti Ramon",
-        tipus: "Bug",
-        prioritat: "Trivial",
-        status: "Nou",
-        vote_set: 2,
-        watch_set: 4
-      },
-      comments2: [
-        {
-          id: 1,
-          content: "Comentari 1",
-          issue: 10,
-          adjunt: null,
-          data_creacio: "2019-11-20",
-          owner: "Aina Garcia"
-        },
-        {
-          id: 2,
-          content: "Comentari 2",
-          issue: 10,
-          adjunt: null,
-          data_creacio: "2019-11-20",
-          owner: "Marti Ramon"
-        },
-        {
-          id: 3,
-          content: "Comentari 3",
-          issue: 10,
-          adjunt: null,
-          data_creacio: "2019-11-20",
-          owner: "Marti Ramon" // posar aixi a la api, ara retorna un id only
-        }
-      ],
       comments: []
     };
   },
@@ -227,20 +187,32 @@ export default {
       // hauria de posar aqui les credencials i tal
       await axios
         .get(
-          "https://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
-            this.$router.id
+          "http://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+            this.$route.params.id
         )
         .then(response => {
           this.issue = response.data;
           return response.data;
         });
     },
-    /*  API CALLS  */
-    getComments: async function() {},
+    getComments: async function() {
+      axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+      // hauria de posar aqui les credencials i tal
+      await axios
+        .get(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/comment?issue=" +
+            this.$route.params.id
+        )
+        .then(response => {
+          this.comments = response.data;
+          return response.data;
+        });
+    },
     postComment: async function() {},
     editComment: async function(/*commentid, commentcontent*/) {},
     deleteComment: async function() {
       /*API CALL HERE*/
+
       this.$bvModal.hide("modalDelete");
       this.selectedDelete = 0;
     },
