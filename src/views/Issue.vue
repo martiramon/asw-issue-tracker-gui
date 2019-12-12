@@ -231,7 +231,17 @@ export default {
     editComment: async function(/*commentid, commentcontent*/) {},
     deleteComment: async function() {
       /*API CALL HERE*/
-
+      await axios.delete(
+        "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
+        {
+          id: this.selectedDelete
+        },
+        {
+          headers: {
+            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+          }
+        }
+      );
       this.$bvModal.hide("modalDelete");
       this.selectedDelete = 0;
     },
