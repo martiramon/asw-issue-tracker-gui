@@ -49,8 +49,8 @@
         </b-form-select>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Crea l'issue</b-button>
-      <b-button type="reset" variant="danger">Descartar</b-button>
+      <b-button href="/issues/" type="submit" variant="primary">Crea l'issue</b-button>
+      <b-button type="reset" variant="secondary">Descartar</b-button>
     </b-form>
     <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
@@ -67,13 +67,16 @@ import axios from "axios";
         form: {
           titol: '',
           descripcio: '',
+          data_creacio: '',
+          assignee: null,
           tipus: null,
           prioritat: null,
-          assignee: null
+          status: "Nou"
         },
         prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
         tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
         users: [],
+        issue: null,
         user: {
           id: null,
           username: null
@@ -82,17 +85,29 @@ import axios from "axios";
       }
     },
     methods: {
-      onSubmit: async function(evt){
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
+      onSubmit: async function(){
+        var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+        this.form.data_creacio = currentDateWithFormat;
+        //evt.preventDefault();
+        //alert(JSON.stringify(this.form));
+        
         // hauria de posar aqui les credencials i tal
         await axios
           .post(
             "https://asw-issue-tracker-2019.herokuapp.com/api/issues/",
-            this.form,
+            {
+              titol: this.form.titol,
+              descripcio: this.form.descripcio,
+              data_creacio: this.form.data_creacio,
+              assignee: this.form.assignee,
+              tipus: this.form.tipus,
+              prioritat: this.form.prioritat,
+              status: this.form.status
+            },
             {
               headers: {
-                'Authorization': 'Token a86c3b4efbcc61ed92d7f49d229be544c4d32f43'
+                "content-type": "application/json",
+                authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
               }
             }
           ).then(response => {
