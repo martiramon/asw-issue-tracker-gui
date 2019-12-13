@@ -231,9 +231,10 @@ export default {
     editComment: async function(commentid, commentcontent) {
       await axios
         .put(
-          "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
+          "http://asw-issue-tracker-2019.herokuapp.com/api/comment/" +
+            commentid +
+            "/",
           {
-            id: commentid,
             content: commentcontent
           },
           {
@@ -251,21 +252,56 @@ export default {
     deleteComment: async function() {
       /*API CALL HERE*/
       await axios.delete(
-        "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
-        {
-          id: this.selectedDelete
-        },
+        "http://asw-issue-tracker-2019.herokuapp.com/api/comment/" +
+          this.selectedDelete,
         {
           headers: {
             authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
           }
         }
       );
+      this.getComments();
       this.$bvModal.hide("modalDelete");
       this.selectedDelete = 0;
     },
     updateStatus: async function() {
-      /*API CALL*/
+      // change status
+      await axios.put(
+        "http://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+          this.$route.params.id +
+          "/",
+        {
+          status: this.changeStatus.selectedStatus
+        },
+        {
+          headers: {
+            "content-type": "application/json",
+            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+          }
+        }
+      );
+
+      let comentari =
+        "Estat canviat a " +
+        this.changeStatus.selectedStatus +
+        ".\n" +
+        this.changeStatus.statusComment;
+      // push comment
+      await axios.post(
+        "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
+        {
+          issue: this.$route.params.id,
+          content: comentari,
+          adjunt: null
+        },
+        {
+          headers: {
+            "content-type": "application/json",
+            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+          }
+        }
+      );
+
       this.resetStatusComment();
       this.getIssue();
     },
