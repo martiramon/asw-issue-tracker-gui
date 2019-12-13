@@ -1,11 +1,7 @@
 <template>
   <div class="container mt-4">
     <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-      <b-form-group
-        id="input-group-1"
-        label="Títol:"
-        label-for="input-1"
-      >
+      <b-form-group id="input-group-1" label="Títol:" label-for="input-1">
         <b-form-input
           id="input-1"
           v-model="form.titol"
@@ -87,4 +83,5 @@
       }
     }
   }
+};
 </script>
