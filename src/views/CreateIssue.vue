@@ -49,7 +49,7 @@
         </b-form-select>
       </b-form-group>
 
-      <b-button href="/issues/" type="submit" variant="primary">Crea l'issue</b-button>
+      <b-button type="submit" variant="primary">Crea l'issue</b-button>
       <b-button type="reset" variant="secondary">Descartar</b-button>
     </b-form>
     <b-card class="mt-3" header="Form Data Result">
@@ -111,7 +111,9 @@ import axios from "axios";
               }
             }
           ).then(response => {
+            //aquí hauríem de mirar de redirigir-nos a la pàgina detallada de l'issue creada
             this.issue = response.data;
+            //this.$route.go('/issues/' + response.data.id + '/')
             return response.data;
           });
       },
