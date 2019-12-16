@@ -75,6 +75,13 @@ import axios from "axios";
         )
         .then(response => {
           this.issue = response.data;
+          // this.form.titol = this.issue.titol;
+          // this.form.descripcio = this.issue.descripcio;
+          // this.form.data_creacio = this.issue.data_creacio;
+          // this.form.assignee = this.issue.assignee;
+          // this.form.tipus = this.issue.tipus;
+          // this.form.prioritat = this.issue.prioritat;
+          // this.form.status = this.issue.status;
           return response.data;
         });
     },
