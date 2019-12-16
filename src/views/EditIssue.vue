@@ -6,7 +6,7 @@
       </b-form-group>
 
       <b-form-group id="input-group-2" label="Descripció:" label-for="input-2">
-        <b-form-textarea id="textarea" v-model="form.descripcio" rows="3" max-rows="6"></b-form-textarea>
+        <b-form-textarea id="textarea" v-model="form.descripcio" value="this.issue.descripcio" rows="3" max-rows="6"></b-form-textarea>
 
         <pre class="mt-3 mb-0">{{ text }}</pre>
       </b-form-group>
@@ -74,14 +74,15 @@ import axios from "axios";
             this.$route.params.id
         )
         .then(response => {
+          
           this.issue = response.data;
-          // this.form.titol = this.issue.titol;
-          // this.form.descripcio = this.issue.descripcio;
-          // this.form.data_creacio = this.issue.data_creacio;
-          // this.form.assignee = this.issue.assignee;
-          // this.form.tipus = this.issue.tipus;
-          // this.form.prioritat = this.issue.prioritat;
-          // this.form.status = this.issue.status;
+          this.form.titol = this.issue.titol;
+          this.form.descripcio = this.issue.descripcio;
+          this.form.data_creacio = this.issue.data_creacio; 
+          this.form.assignee = this.issue.assignee;
+          this.form.tipus = this.issue.tipus;
+          this.form.prioritat = this.issue.prioritat;
+          this.form.status = this.issue.status;
           return response.data;
         });
     },
@@ -89,21 +90,11 @@ import axios from "axios";
       evt.preventDefault();
       alert(JSON.stringify(this.form));
     },
-    onReset(evt) {
-      evt.preventDefault();
-      // Reset our form values
-      this.form.titol = "";
-      this.form.descripcio = "";
-      this.form.tipus = null;
-      this.form.prioritat = null;
-      // Trick to reset/clear native browser form validation state
-      this.show = false;
-      this.$nextTick(() => {
-        this.show = true;
-      })
-    },
+    onReset() {
+      this.$router.push('/issues/' + this.$route.params.id + '/')
+    }},
     mounted() {
       this.getIssue();
     }
-  }};
+  };
 </script>
