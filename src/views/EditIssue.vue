@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
   export default {
     data() {
       return {
@@ -63,30 +65,19 @@
         show: true
       }
     },
-    methods: {
-      onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
-      },
-      prioritat: [
-        { text: "Tria'n una", value: null },
-        "Trivial",
-        "Menor",
-        "Major",
-        "Crítica",
-        "Bloquejant"
-      ],
-      tipus: [
-        { text: "Tria'n un", value: null },
-        "Bug",
-        "Millora",
-        "Proposta",
-        "Tasca"
-      ],
-      show: true
-    };
-  },
   methods: {
+    getIssue: async function() {
+      // hauria de posar aqui les credencials i tal
+      await axios
+        .get(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+            this.$route.params.id
+        )
+        .then(response => {
+          this.issue = response.data;
+          return response.data;
+        });
+    },
     onSubmit(evt) {
       evt.preventDefault();
       alert(JSON.stringify(this.form));
@@ -102,7 +93,10 @@
       this.show = false;
       this.$nextTick(() => {
         this.show = true;
-      });
+      })
+    },
+    mounted() {
+      this.getIssue();
     }
-  };
+  }};
 </script>
