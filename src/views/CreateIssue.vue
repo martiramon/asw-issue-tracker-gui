@@ -86,7 +86,7 @@ import axios from "axios";
         this.form.data_creacio = currentDateWithFormat;
         //evt.preventDefault();
         //alert(JSON.stringify(this.form));
-        
+
         // hauria de posar aqui les credencials i tal
         await axios
           .post(
@@ -109,7 +109,7 @@ import axios from "axios";
           ).then(response => {
             //aquí hauríem de mirar de redirigir-nos a la pàgina detallada de l'issue creada
             this.issue = response.data;
-            //this.$route.go('/issues/' + response.data.id + '/')
+            this.$router.push('/issues/' + response.data.id + '/')
             return response.data;
           });
       },
