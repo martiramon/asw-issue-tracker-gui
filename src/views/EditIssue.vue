@@ -14,12 +14,24 @@
       <b-form-group id="input-group-3" label="Tipus:" label-for="input-3">
         <b-form-select id="input-3" v-model="form.tipus" :options="tipus" required></b-form-select>
       </b-form-group>
-      <b-form-group id="input-group-3" label="Prioritat:" label-for="input-3">
-        <b-form-select id="input-3" v-model="form.prioritat" :options="prioritat" required></b-form-select>
+      <b-form-group id="input-group-4" label="Prioritat:" label-for="input-4">
+        <b-form-select
+          id="input-4"
+          v-model="form.prioritat"
+          :options="prioritat"
+          required
+        ></b-form-select>
+      </b-form-group>
+      <b-form-group id="input-group-5" label="Assignat:" label-for="input-5">
+        <b-form-select v-model="form.assignee">
+          <option v-for="item in users" :value="item.id" :key="item.id">
+            {{ item.username }}
+          </option>
+        </b-form-select>
       </b-form-group>
 
       <b-button type="submit" variant="primary">Crea l'issue</b-button>
-      <b-button type="reset" variant="danger">Descartar</b-button>
+      <b-button type="reset" variant="secondary">Descartar</b-button>
     </b-form>
     <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
@@ -28,14 +40,33 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      form: {
-        titol: "",
-        descripcio: "",
-        tipus: null,
-        prioritat: null
+  export default {
+    data() {
+      return {
+        form: {
+          titol: '',
+          descripcio: '',
+          data_creacio: '',
+          assignee: null,
+          tipus: null,
+          prioritat: null,
+          status: "Nou"
+        },
+        prioritat: [{text: "Tria'n una", value: null}, 'Trivial', 'Menor', 'Major', 'Crítica', 'Bloquejant'],
+        tipus: [{ text: "Tria'n un", value: null }, 'Bug', 'Millora', 'Proposta', 'Tasca'],
+        users: [],
+        issue: null,
+        user: {
+          id: null,
+          username: null
+        },
+        show: true
+      }
+    },
+    methods: {
+      onSubmit(evt) {
+        evt.preventDefault()
+        alert(JSON.stringify(this.form))
       },
       prioritat: [
         { text: "Tria'n una", value: null },
@@ -73,6 +104,5 @@ export default {
         this.show = true;
       });
     }
-  }
-};
+  };
 </script>
