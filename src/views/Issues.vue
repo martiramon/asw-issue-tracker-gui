@@ -48,12 +48,14 @@
 </template>
 
 <script>
+import VueJwtDecode from 'vue-jwt-decode';
 import axios from "axios";
   export default {
     data() {
       return {
         issues: null,
         users: null,
+        mytoken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQiLCJuYW1lIjoibWFydGlyYW04In0.h3W2k3vKQK5U_j7p-Gu48Zm-hMR40GSyJSnQA5SJPpw",
         // Note 'isActive' is left out and will not appear in the rendered table
         fields: [
           {
@@ -143,7 +145,7 @@ import axios from "axios";
       var watchers = `${Object.keys(value).map(function(e){
         return value[e].watcher;
       })}`;
-      if (watchers.includes(6)) {return "Sí"}
+      if (watchers.includes(VueJwtDecode.decode(this.mytoken).id)) {return "Sí"}
       else {return "No"}
     },
     getUsername(value) {
