@@ -53,6 +53,7 @@ import axios from "axios";
     data() {
       return {
         issues: null,
+        users: null,
         // Note 'isActive' is left out and will not appear in the rendered table
         fields: [
           {
@@ -79,6 +80,7 @@ import axios from "axios";
             key: 'assignee',
             label: 'Assignat a',
             sortable: true,
+            formatter: 'getUsername',
           },
           {
             key: 'vote_set',
@@ -123,6 +125,17 @@ import axios from "axios";
           return response.data;
         });
     },
+    getUsers: async function() {
+      // hauria de posar aqui les credencials i tal
+      await axios
+        .get(
+          "https://asw-issue-tracker-2019.herokuapp.com/api/user/"
+        )
+        .then(response => {
+          this.users = response.data;
+          return response.data;
+        });
+    },
     countVotes(value) {
       return `${Object.keys(value).length}`
     },
@@ -133,11 +146,17 @@ import axios from "axios";
       if (watchers.includes(6)) {return "Sí"}
       else {return "No"}
     },
+    getUsername(value) {
+      var x = this.users[value].username;
+      return x
+    },
   },
   mounted() {
     this.getIssues();
+    this.getUsers();
     this.countVotes();
     this.iswatching();
+    this.getUsername();
   }
   }
 </script>
