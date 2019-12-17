@@ -1,7 +1,15 @@
 <template>
-  <div>SINGLE ISSUE PAGE</div>
+  <div>
+    <div>
+        Welcome home!
+    </div>
+    <div>
+        <button @click="authenticate('google')">auth Google</button>
+    </div>
+  </div>
 </template>
 
 <script>
-export default {};
+import { authMixin } from '../mixins/authMixin';
+export default {mixins: [ authMixin ],};
 </script>
