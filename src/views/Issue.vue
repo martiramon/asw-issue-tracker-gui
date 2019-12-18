@@ -302,16 +302,11 @@ export default {
           test = item.id
         }
       });
-      // eslint-disable-next-line no-console
       return test;
     },
     isWatched(){
       let test = -1;
       this.issue.watch_set.forEach(function(item){ 
-        // eslint-disable-next-line no-console
-        console.log(item.watcher);
-        // eslint-disable-next-line no-console
-        console.log(VueJwtDecode.decode(token).user_id);
         if (token != null && item.watcher === VueJwtDecode.decode(token).user_id){
           test = item.id
         }
@@ -320,7 +315,10 @@ export default {
       return test;
     },
     getUserId(){
-      let id = VueJwtDecode.decode(this.mytoken).user_id
+      let id = -1;
+      if (this.mytoken != null) {
+        id = VueJwtDecode.decode(this.mytoken).user_id
+      } 
       return id;
     },
     handleFileUpload(){
