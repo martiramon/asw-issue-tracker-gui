@@ -3,13 +3,24 @@
     <div>
         Welcome home!
     </div>
-    <div>
-        <button @click="authenticate('google')">auth Google</button>
+    <div v-if="haveToken"> 
+        <button @click="authenticate('google')">Log Out</button>
+    </div>
+    <div v-else>
+      <button @click="authenticate('google')">Log In</button>
     </div>
   </div>
 </template>
 
 <script>
-import { authMixin } from '../mixins/authMixin';
-export default {mixins: [ authMixin ],};
+  import { authMixin } from '../mixins/authMixin';
+  let token = localStorage.getItem('vue-authenticate.vueauth_token');
+  export default {
+    mixins: [ authMixin ],
+    computed: {
+      haveToken() {
+        return token != null;
+      }
+    }
+  };
 </script>

@@ -4,5 +4,15 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    authenticated: false
+    state: {
+        authenticated: false
+    },
+    mutations: {
+        change(state, authenticated) {
+          state.authenticated = authenticated
+        }
+      },
+    getters: {
+        authenticated: state => state.authenticated
+    }
 })
