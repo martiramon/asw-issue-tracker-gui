@@ -4,11 +4,11 @@
       <div class=col-xl-3>
      <h1>Issue Tracker</h1>
       </div>
-      <div class="col-xl-2 offset-xl-7">
-        <b-button v-if="haveToken" v-on:click="authenticate('google')">Log In</b-button>
-        <b-button v-else v-on:click="logout()">Log Out</b-button>
+      <div class="col-xl-4 offset-xl-9">
         <b-button href='#/issues/new'> Nova Issue</b-button>
-      </div>
+        <b-button variant="primary" v-if="haveToken" v-on:click="authenticate('google')">Log In</b-button>
+        <b-button variant="primary" v-else v-on:click="logout()">Log Out</b-button>
+      </div> 
     </div> 
         <b-button-toolbar>
           Filtrar per:
