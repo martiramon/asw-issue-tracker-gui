@@ -166,8 +166,13 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
       else {return "No"}
     },
     getUsername(value) {
-      var x = this.users[value].username;
-      return x
+      var size =  Object.keys(this.users).length;
+      var i = 0;
+      while (i < size) {
+        if (this.users[i].id == value) return this.users[i].username;
+        i++;
+      }
+      return ""
     },
     getMyIssues: async function() {
       await this.getIssues();
