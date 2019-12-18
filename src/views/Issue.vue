@@ -163,22 +163,8 @@
             </label>
               <button v-on:click="postAdjunt()">Submit</button>
           </div>
-
-            <!-- <b-form-file
-              v-model="file"
-              :state="Boolean(file)"
-              placeholder="Tria un fitxer..."
-              drop-placeholder="Arrossega'l fins aquí..."
-            ></b-form-file>
-            <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
-            <template v-slot:modal-footer>
-              <div class="w-100">
-              <b-button type="submit" class="float-right" size="sm" variant="primary"  @click="postAdjunt">Pugeu el fitxer</b-button>
-              <b-button type="reset" class="float-right" size="sm" variant="secondary"  @click="show=false">Descartar</b-button>
-             </div>
-            </template> -->
-          
-        </b-modal>
+          </b-modal>
+        
         
       </div>
     </div>
@@ -347,19 +333,20 @@ export default {
         });
     },
     postAdjunt: async function() {
-      let formData = new FormData();
-      formData.append('file', this.file);
+      token = localStorage.getItem('vue-authenticate.vueauth_token');
       var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
       var creacio = currentDateWithFormat;
+      let formData = new FormData();
+      formData.append('issue', this.$route.params.id);
+      formData.append('data_creacio', creacio);
+      if (token != null) {
+        formData.append('owner', VueJwtDecode.decode(token).user_id);
+      }
+      formData.append('file', this.file);
       await axios
         .post(
           "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/",
-          {
-            issue: this.$route.params.id,
-            data_creacio: creacio,
-            owner: 6,
-            data: formData
-          },
+          formData,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
