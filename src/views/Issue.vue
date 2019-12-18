@@ -8,7 +8,7 @@
         </h4>
         <h1>{{ issue.titol }}</h1>
         <p>
-          <b>{{ issue.creator }}</b>
+          <b>{{ getUsername(issue.creator) }}</b>
           created an issue on {{ issue.data_creacio }}
         </p>
         <p>{{ issue.descripcio }}</p>
@@ -63,7 +63,7 @@
         <b-col class="mx-auto" v-for="comment in comments" :key="comment.id" :id="comment.id">
           <b-row>
             <p>
-              <b>{{ comment.owner }}</b>
+              <b>{{ getUsername(comment.owner) }}</b>
               <br />
               {{ comment.content }}
             </p>
@@ -128,7 +128,7 @@
           <b-card>
             <b-card-text>
               <b>Assignat:</b>
-              {{ issue.assignee }}
+              {{ getUsername(issue.assignee) }}
               <br />
               <b>Tipus:</b>
               {{ issue.tipus }}
@@ -169,6 +169,7 @@ export default {
         "NoFix",
         "Tancat"
       ],
+      users: [],
       commentcontentaux: "",
       selectedDelete: 0,
       changeStatus: {
@@ -301,9 +302,16 @@ export default {
           }
         }
       );
-
       this.resetStatusComment();
       this.getIssue();
+    },
+    getUsers: async function() {
+      await axios
+        .get("http://asw-issue-tracker-2019.herokuapp.com/api/user/")
+        .then(response => {
+          this.users = response.data;
+          return response.data;
+        });
     },
     /*  MODAL TOGGLE  */
     confirmDelete: function(cid) {
@@ -326,11 +334,16 @@ export default {
       var commentid = event.currentTarget.getAttribute("id");
       document.getElementById("elem" + commentid).style.display = "none";
       this.commentcontentaux = "";
+    },
+    getUsername: function(uid) {
+      var user = this.users.find(x => x.id === uid);
+      return user.username;
     }
   },
   mounted() {
     this.getIssue();
     this.getComments();
+    this.getUsers();
   }
 };
 </script>
