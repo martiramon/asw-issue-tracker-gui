@@ -16,7 +16,7 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(VueAxios, axios)
 Vue.use(VueAuthenticate, {
-  baseUrl: 'http://localhost:8000', // Your API domain
+  baseUrl: 'http://localhost:8000',
   storageType: 'localStorage',
   tokenPath: 'token',
 
@@ -24,7 +24,7 @@ Vue.use(VueAuthenticate, {
     google: {
       clientId: '244422922408-vdedmjki6dk0992me3f89mdfocbjej6u.apps.googleusercontent.com',
       redirectUri: 'http://localhost:8080/',
-      url: 'http://localhost:8000/api/login/social/jwt_user/google/',
+      url: 'http://asw-issue-tracker-2019.herokuapp.com/api/login/social/jwt_user/google/',
     }
   }
 });

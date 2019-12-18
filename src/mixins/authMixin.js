@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Store } from '../store/store.js';
 
 export const authMixin = {
     methods: {
@@ -13,7 +12,6 @@ export const authMixin = {
         },
         authenticate: function() {
             this.$auth.authenticate('google', {provider: "google-oauth2"}).then(function () {
-                Store.commit('change', true);
             }).catch(function(error) {
                 throw new Error(error.message);
             });

@@ -111,7 +111,7 @@ import axios from "axios";
             {
               headers: {
                 "content-type": "application/json",
-                authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+                authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
               }
             }
           ).then(response => {

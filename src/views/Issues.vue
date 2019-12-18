@@ -6,6 +6,7 @@
       </div>
       <div class="col-xl-2 offset-xl-7">
         <b-button v-if="haveToken" v-on:click="authenticate('google')">Log In</b-button>
+        <b-button v-else v-on:click="logout()">Log Out</b-button>
         <b-button href='#/issues/new'> Nova Issue</b-button>
       </div>
     </div> 
@@ -59,15 +60,15 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
     mixins: [ authMixin ],
     computed: {
       haveToken() {
-        return token != null;
+        return token == null;
       }
-    }
-    
+    },
+
     data() {
       return {
         issues: null,
         users: null,
-        mytoken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQiLCJuYW1lIjoibWFydGlyYW04In0.h3W2k3vKQK5U_j7p-Gu48Zm-hMR40GSyJSnQA5SJPpw",
+        mytoken: localStorage.getItem('vue-authenticate.vueauth_token'),
         // Note 'isActive' is left out and will not appear in the rendered table
         fields: [
           {
@@ -150,6 +151,10 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
           return response.data;
         });
     },
+    logout(){
+      localStorage.removeItem('vue-authenticate.vueauth_token');
+      window.location.href = '/';
+    },
     countVotes(value) {
       return `${Object.keys(value).length}`
     },
@@ -157,7 +162,7 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
       var watchers = `${Object.keys(value).map(function(e){
         return value[e].watcher;
       })}`;
-      if (watchers.includes(VueJwtDecode.decode(this.mytoken).id)) {return "Sí"}
+      if (watchers.includes(VueJwtDecode.decode(this.mytoken).user_id)) {return "Sí"}
       else {return "No"}
     },
     getUsername(value) {
@@ -166,7 +171,7 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
     },
     getMyIssues: async function() {
       await this.getIssues();
-      var myid = VueJwtDecode.decode(this.mytoken).id;
+      var myid = VueJwtDecode.decode(this.mytoken).user_id;
       var size = Object.keys(this.issues).length;
       var i = 0;
       var issues2 = [];
@@ -183,7 +188,7 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
     },
     getMyWatching: async function() {
       await this.getIssues();
-      var myid = VueJwtDecode.decode(this.mytoken).id;
+      var myid = VueJwtDecode.decode(this.mytoken).user_id;
       var size = Object.keys(this.issues).length;
       var i = 0;
       var issues2 = [];

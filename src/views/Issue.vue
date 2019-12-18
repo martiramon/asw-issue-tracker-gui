@@ -255,7 +255,7 @@ export default {
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
             }
           }
         )
@@ -277,7 +277,7 @@ export default {
           {
             headers: {
               "content-type": "application/json",
-              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
             }
           }
         )
@@ -304,7 +304,7 @@ export default {
           {
             headers: {
               "content-type": "application/json",
-              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
             }
           }
         )
@@ -321,7 +321,7 @@ export default {
           this.selectedDelete,
         {
           headers: {
-            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
           }
         }
       );
@@ -347,7 +347,7 @@ export default {
         {
           headers: {
             "content-type": "application/json",
-            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
           }
         }
       );
@@ -368,7 +368,7 @@ export default {
         {
           headers: {
             "content-type": "application/json",
-            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
           }
         }
       );
@@ -390,7 +390,7 @@ export default {
           this.$route.params.id,
         {
           headers: {
-            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
           }
         }
       );
