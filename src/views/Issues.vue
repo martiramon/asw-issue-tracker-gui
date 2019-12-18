@@ -162,7 +162,7 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
       var watchers = `${Object.keys(value).map(function(e){
         return value[e].watcher;
       })}`;
-      if (watchers.includes(VueJwtDecode.decode(this.mytoken).user_id)) {return "Sí"}
+      if (this.mytoken != null && watchers.includes(VueJwtDecode.decode(this.mytoken).user_id)) {return "Sí"}
       else {return "No"}
     },
     getUsername(value) {

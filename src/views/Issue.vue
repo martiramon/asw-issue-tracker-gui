@@ -72,12 +72,14 @@
           <b-row>
             <!-- user-only visible content-->
             <button
+              v-if="getUserId() == comment.owner"
               v-b-modal.modalDelete
               @click="confirmDelete(comment.id)"
               type="button"
               class="btn btn-link"
             >Esborra</button>
             <button
+              v-if="getUserId() == comment.owner"
               type="button"
               class="btn btn-link"
               :id="comment.id"
@@ -110,7 +112,7 @@
       <div class="col-lg-4">
         <b-row class="mb-3 mx-auto">
           <b-button-group>
-            <b-dropdown text="Status">
+            <b-dropdown v-if="getUserId() == issue.creator" text="Status">
               <b-dropdown-item
                 v-for="option in status"
                 :key="option"
@@ -120,13 +122,13 @@
             </b-dropdown>
             <b-dropdown text="Més">
               <b-dropdown-item v-b-modal="'my-modal'">Adjunteu fitxer</b-dropdown-item>
-              <b-dropdown-item @click="editIssue">Edita</b-dropdown-item>
-              <b-dropdown-item @click="deleteIssue">Esborra</b-dropdown-item>
+              <b-dropdown-item v-if="getUserId() == issue.creator" @click="editIssue">Edita</b-dropdown-item>
+              <b-dropdown-item v-if="getUserId() == issue.creator" @click="deleteIssue">Esborra</b-dropdown-item>
             </b-dropdown>
             <b-button href="#/issues" variant="primary">Inici</b-button>
           </b-button-group>
         </b-row>
-        <b-row class="mx-auto">
+        <b-row ref="test" class="mx-auto">
           <b-card>
             <b-card-text>
               <b>Assignat:</b>
@@ -142,10 +144,14 @@
               {{ issue.status }}
               <br />
               <b>Vots:</b>
-              {{ issue.vote_set.length }}
+                {{ issue.vote_set.length }} 
+                <b-button variant="secondary" v-if="isVoted() < 0" v-on:click="vote()">Vote</b-button>
+                <b-button variant="secondary" v-else v-on:click="unvote()">Unvote</b-button>                
               <br />
               <b>Watchers:</b>
-              {{ issue.watch_set.lenght }}
+                {{ issue.watch_set.length }} 
+                <b-button variant="secondary" v-if="isWatched() < 0" v-on:click="watch()">Watch</b-button>
+                <b-button variant="secondary" v-else v-on:click="unwatch()">Unwatch</b-button>
               <br />
             </b-card-text>
           </b-card>
@@ -181,8 +187,11 @@
 
 <script>
 import axios from "axios";
+import VueJwtDecode from 'vue-jwt-decode';
+let token = localStorage.getItem('vue-authenticate.vueauth_token');
 
 export default {
+
   data() {
     return {
       status: [
@@ -195,7 +204,9 @@ export default {
         "NoFix",
         "Tancat"
       ],
+      componentKey: 0,
       users: [],
+      mytoken: localStorage.getItem('vue-authenticate.vueauth_token'),
       commentcontentaux: "",
       selectedDelete: 0,
       changeStatus: {
@@ -210,11 +221,112 @@ export default {
     };
   },
   methods: {
+    vote: async function() {
+      await axios
+        .post(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/vote/",
+          {
+            issue: this.$route.params.id,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            }
+          }
+        )
+        .then(response => {
+          this.issue = this.getIssue();
+          this.$$refs.test.refresh();
+          return response.data;
+        });
+    },
+    unvote: async function() {
+      let test_id = this.isVoted();
+      await axios
+        .delete(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/vote/" + test_id + "/",
+          {
+            headers: {
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            }
+          }
+        )
+        .then(response => {
+          this.issue = this.getIssue();
+          this.$$refs.test.refresh();
+          return response.data;
+        });
+    },
+    watch: async function() {
+      await axios
+        .post(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/watch/",
+          {
+            issue: this.$route.params.id,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            }
+          }
+        )
+        .then(response => {
+          this.issue = this.getIssue();
+          this.$$refs.test.refresh();
+          return response.data;
+        });
+    },
+    unwatch: async function() {
+      let test_id = this.isWatched();
+      await axios
+        .delete(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/watch/" + test_id + "/",
+          {
+            headers: {
+              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            }
+          }
+        )
+        .then(response => {
+          this.issue = this.getIssue();
+          this.$$refs.test.refresh();
+          return response.data;
+        });
+    },
+    isVoted(){
+      let test = -1;
+      this.issue.vote_set.forEach(function(item){ 
+        if (token != null && item.voter === VueJwtDecode.decode(token).user_id){
+          test = item.id
+        }
+      });
+      // eslint-disable-next-line no-console
+      return test;
+    },
+    isWatched(){
+      let test = -1;
+      this.issue.watch_set.forEach(function(item){ 
+        // eslint-disable-next-line no-console
+        console.log(item.watcher);
+        // eslint-disable-next-line no-console
+        console.log(VueJwtDecode.decode(token).user_id);
+        if (token != null && item.watcher === VueJwtDecode.decode(token).user_id){
+          test = item.id
+        }
+      });
+
+      return test;
+    },
+    getUserId(){
+      let id = VueJwtDecode.decode(this.mytoken).user_id
+      return id;
+    },
     handleFileUpload(){
         this.file = this.$refs.file.files[0];
       },
     getIssue: async function() {
-      // hauria de posar aqui les credencials i tal
       await axios
         .get(
           "http://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
@@ -226,7 +338,6 @@ export default {
         });
     },
     getComments: async function() {
-      // hauria de posar aqui les credencials i tal
       await axios
         .get(
           "http://asw-issue-tracker-2019.herokuapp.com/api/comment?issue=" +
@@ -238,7 +349,6 @@ export default {
         });
     },
     postAdjunt: async function() {
-      // hauria de posar aqui les credencials i tal
       let formData = new FormData();
       formData.append('file', this.file);
       var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');

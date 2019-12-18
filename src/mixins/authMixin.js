@@ -12,6 +12,7 @@ export const authMixin = {
         },
         authenticate: function() {
             this.$auth.authenticate('google', {provider: "google-oauth2"}).then(function () {
+                window.location.href = '/';
             }).catch(function(error) {
                 throw new Error(error.message);
             });
