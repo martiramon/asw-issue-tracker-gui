@@ -120,6 +120,8 @@
             </b-dropdown>
             <b-dropdown text="Més">
               <b-dropdown-item>Adjunteu fitxer</b-dropdown-item>
+              <b-dropdown-item @click="editIssue">Edita</b-dropdown-item>
+              <b-dropdown-item @click="deleteIssue">Esborra</b-dropdown-item>
             </b-dropdown>
             <b-button href="#/issues" variant="primary">Inici</b-button>
           </b-button-group>
@@ -326,6 +328,21 @@ export default {
           this.users = response.data;
           return response.data;
         });
+    },
+    deleteIssue: async function() {
+      await axios.delete(
+        "http://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+          this.$route.params.id,
+        {
+          headers: {
+            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+          }
+        }
+      );
+      this.$router.push("/issues/");
+    },
+    editIssue: function() {
+      this.$router.push("/issues/" + this.$route.params.id + "/edit/");
     },
     /*  MODAL TOGGLE  */
     confirmDelete: function(cid) {
