@@ -24,6 +24,7 @@
       </b-form-group>
       <b-form-group id="input-group-5" label="Assignat:" label-for="input-5">
         <b-form-select v-model="form.assignee">
+          
           <option v-for="item in users" :value="item.id" :key="item.id">
             {{ item.username }}
           </option>
@@ -122,8 +123,24 @@ import axios from "axios";
     },
     onReset() {
       this.$router.push('/issues/' + this.$route.params.id + '/')
-    }},
+    },
+    getUsername: function(uid) {
+      this.user = this.users.find(x => x.id === uid);
+      return this.user.username;
+    },
+    getUser: async function() {
+        // hauria de posar aqui les credencials i tal
+        await axios
+          .get(
+            "https://asw-issue-tracker-2019.herokuapp.com/api/user/"
+          )
+          .then(response =>{
+                        this.users = response.data
+                    })
+          }
+    },
     mounted() {
+      this.getUser();
       this.getIssue();
     }
   };
