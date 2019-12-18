@@ -119,7 +119,7 @@
               >{{ option }}</b-dropdown-item>
             </b-dropdown>
             <b-dropdown text="Més">
-              <b-dropdown-item>Adjunteu fitxer</b-dropdown-item>
+              <b-dropdown-item v-b-modal="'my-modal'">Adjunteu fitxer</b-dropdown-item>
               <b-dropdown-item @click="editIssue">Edita</b-dropdown-item>
               <b-dropdown-item @click="deleteIssue">Esborra</b-dropdown-item>
             </b-dropdown>
@@ -150,6 +150,30 @@
             </b-card-text>
           </b-card>
         </b-row>
+        <b-modal id="my-modal" title="Adjunteu un fitxer">
+          <div class="large-12 medium-12 small-12 cell">
+            <label>Fixer: 
+              <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+            </label>
+              <button v-on:click="postAdjunt()">Submit</button>
+          </div>
+
+            <!-- <b-form-file
+              v-model="file"
+              :state="Boolean(file)"
+              placeholder="Tria un fitxer..."
+              drop-placeholder="Arrossega'l fins aquí..."
+            ></b-form-file>
+            <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+            <template v-slot:modal-footer>
+              <div class="w-100">
+              <b-button type="submit" class="float-right" size="sm" variant="primary"  @click="postAdjunt">Pugeu el fitxer</b-button>
+              <b-button type="reset" class="float-right" size="sm" variant="secondary"  @click="show=false">Descartar</b-button>
+             </div>
+            </template> -->
+          
+        </b-modal>
+        
       </div>
     </div>
   </div>
@@ -178,6 +202,7 @@ export default {
         selectedStatus: "",
         statusComment: ""
       },
+      file: null,
       comentari: "", //camp per guardar el comentari quan toqui
       issue: {},
       // issue per testejar la gui, la que s'ha de fer servir es la que es diu 'issue' que s'obte amb request
@@ -185,6 +210,9 @@ export default {
     };
   },
   methods: {
+    handleFileUpload(){
+        this.file = this.$refs.file.files[0];
+      },
     getIssue: async function() {
       // hauria de posar aqui les credencials i tal
       await axios
@@ -206,6 +234,33 @@ export default {
         )
         .then(response => {
           this.comments = response.data;
+          return response.data;
+        });
+    },
+    postAdjunt: async function() {
+      // hauria de posar aqui les credencials i tal
+      let formData = new FormData();
+      formData.append('file', this.file);
+      var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+      var creacio = currentDateWithFormat;
+      await axios
+        .post(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/",
+          {
+            issue: this.$route.params.id,
+            data_creacio: creacio,
+            owner: 6,
+            data: formData
+          },
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            }
+          }
+        )
+        .then(response => {
+          this.getComments();
           return response.data;
         });
     },
