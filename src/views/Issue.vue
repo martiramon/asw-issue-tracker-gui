@@ -99,7 +99,7 @@
               <b-button
                 type="button"
                 class="btn btn-success"
-                @click="editComment(comment.id, comment.content)"
+                @click="editComment(comment.id)"
               >Guarda</b-button>
             </div>
           </div>
@@ -229,14 +229,20 @@ export default {
           return response.data;
         });
     },
-    editComment: async function(commentid, commentcontent) {
+    editComment: async function(commentid) {
+      var comment = this.comments.find(x => x.id === commentid);
+      comment.content = this.commentcontentaux;
       await axios
         .put(
           "http://asw-issue-tracker-2019.herokuapp.com/api/comment/" +
             commentid +
             "/",
           {
-            content: commentcontent
+            content: comment.content,
+            issue: this.$route.params.id,
+            adjunt: null,
+            data_creacio: comment.data_creacio,
+            owner: 6
           },
           {
             headers: {
@@ -247,6 +253,7 @@ export default {
         )
         .then(response => {
           this.getComments();
+          this.hideEditComment(commentid);
           return response.data;
         });
     },
@@ -330,8 +337,7 @@ export default {
       document.getElementById("elem" + commentid).style.display = "block";
       this.commentcontentaux = c;
     },
-    hideEditComment: function() {
-      var commentid = event.currentTarget.getAttribute("id");
+    hideEditComment: function(commentid) {
       document.getElementById("elem" + commentid).style.display = "none";
       this.commentcontentaux = "";
     },
