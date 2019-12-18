@@ -35,7 +35,7 @@
           <div>
             <b-form-textarea
               id="textarea"
-              v-model="changeStatus.comentari"
+              v-model="changeStatus.statusComment"
               placeholder="Afegeix un comentari"
               rows="3"
               max-rows="6"
@@ -282,13 +282,10 @@ export default {
           titol: this.issue.titol,
           descripcio: this.issue.descripcio,
           data_creacio: this.issue.data_creacio,
-          creator: this.issue.creator,
           assignee: this.issue.assignee,
-          tipus: this.issue.status,
+          tipus: this.issue.tipus,
           prioritat: this.issue.prioritat,
-          status: this.changeStatus.selectedStatus,
-          vote_set: this.issue.vote_set,
-          watch_set: this.issue.watch_set
+          status: this.changeStatus.selectedStatus
         },
         {
           headers: {
@@ -320,6 +317,7 @@ export default {
       );
       this.resetStatusComment();
       this.getIssue();
+      this.getComments();
     },
     getUsers: async function() {
       await axios
