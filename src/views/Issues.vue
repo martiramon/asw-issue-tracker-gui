@@ -13,8 +13,8 @@
           <b-button-group class="mx-1">
             <b-button v-on:click="getIssues">Totes</b-button>
             <b-button v-on:click="getFilter('Nou')">Obertes</b-button>
-            <b-button>Les meves issues</b-button>
-            <b-button>Observant</b-button>
+            <b-button v-on:click="getMyIssues()">Les meves issues</b-button>
+            <b-button v-on:click="getMyWatching()">Observant</b-button>
           </b-button-group>
         </b-button-toolbar>
       <h5>Issues:</h5>
@@ -151,6 +151,41 @@ import axios from "axios";
     getUsername(value) {
       var x = this.users[value].username;
       return x
+    },
+    getMyIssues: async function() {
+      await this.getIssues();
+      var myid = VueJwtDecode.decode(this.mytoken).id;
+      var size = Object.keys(this.issues).length;
+      var i = 0;
+      var issues2 = [];
+      while (i < size) {
+        var index = this.issues.findIndex(x => x.creator == myid);
+        if (index !== -1) {
+          issues2.push(this.issues[index])
+          this.issues.splice(index, 1);
+        }
+        i++;
+      }
+      this.issues = issues2;
+      this.$$refs.table.refresh();
+    },
+    getMyWatching: async function() {
+      await this.getIssues();
+      var myid = VueJwtDecode.decode(this.mytoken).id;
+      var size = Object.keys(this.issues).length;
+      var i = 0;
+      var issues2 = [];
+      while(i < size) {
+        var sizewatchers = Object.keys(this.issues[i].watch_set).length;
+        var j = 0;
+        while (j < sizewatchers) {
+          if (this.issues[i].watch_set[j].watcher == myid) issues2.push(this.issues[i])
+          j++;
+        }
+        i++;
+      }
+      this.issues = issues2;
+      this.$$refs.table.refresh();
     },
   },
   mounted() {
