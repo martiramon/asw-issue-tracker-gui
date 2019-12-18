@@ -158,11 +158,15 @@
         </b-row>
         <b-modal id="my-modal" title="Adjunteu un fitxer">
           <div class="large-12 medium-12 small-12 cell">
-            <label>Fixer: 
-              <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
-            </label>
-              <button v-on:click="postAdjunt()">Submit</button>
+             <form>
+                  <div class="form-group">
+                       <input type="file" class="form-control-file" id="attachmentUploadIssue">
+                  </div>
+              </form>
           </div>
+          <template v-slot:modal-footer>
+                    <b-button variant="primary" data-dismiss="modal" v-on:click="postAdjunt">Adjunteu fitxer</b-button>
+              </template>
           </b-modal>
         
         
@@ -175,6 +179,8 @@
 import axios from "axios";
 import VueJwtDecode from 'vue-jwt-decode';
 let token = localStorage.getItem('vue-authenticate.vueauth_token');
+import 'jquery';
+import $ from 'jquery';
 
 export default {
 
@@ -337,12 +343,14 @@ export default {
       var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
       var creacio = currentDateWithFormat;
       let formData = new FormData();
+      var issueAttachment = $('#attachmentUploadIssue').prop('files')[0];
       formData.append('issue', this.$route.params.id);
       formData.append('data_creacio', creacio);
       if (token != null) {
         formData.append('owner', VueJwtDecode.decode(token).user_id);
       }
-      formData.append('file', this.file);
+      //formData.append('file', this.file);
+      formData.append('data', issueAttachment);
       await axios
         .post(
           "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/",
