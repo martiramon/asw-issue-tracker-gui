@@ -279,7 +279,16 @@ export default {
           this.$route.params.id +
           "/",
         {
-          status: this.changeStatus.selectedStatus
+          titol: this.issue.titol,
+          descripcio: this.issue.descripcio,
+          data_creacio: this.issue.data_creacio,
+          creator: this.issue.creator,
+          assignee: this.issue.assignee,
+          tipus: this.issue.status,
+          prioritat: this.issue.prioritat,
+          status: this.changeStatus.selectedStatus,
+          vote_set: this.issue.vote_set,
+          watch_set: this.issue.watch_set
         },
         {
           headers: {
@@ -325,7 +334,7 @@ export default {
       this.selectedDelete = cid;
     },
     commentStatus: function(option) {
-      this.changeStatus.status = option;
+      this.changeStatus.selectedStatus = option;
       this.$bvModal.show("modalStatus");
     },
     resetStatusComment: function() {
