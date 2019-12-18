@@ -30,7 +30,7 @@
         </b-form-select>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Crea l'issue</b-button>
+      <b-button type="submit" variant="primary">Edita l'issue</b-button>
       <b-button type="reset" variant="secondary">Descartar</b-button>
     </b-form>
     <b-card class="mt-3" header="Form Data Result">
@@ -86,9 +86,39 @@ import axios from "axios";
           return response.data;
         });
     },
-    onSubmit(evt) {
-      evt.preventDefault();
-      alert(JSON.stringify(this.form));
+    onSubmit: async function() {
+      var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+        this.form.data_creacio = currentDateWithFormat;
+        //evt.preventDefault();
+        //alert(JSON.stringify(this.form));
+
+        // hauria de posar aqui les credencials i tal
+        await axios
+          .put(
+            "https://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+          this.$route.params.id +
+          "/",
+            {
+              titol: this.form.titol,
+              descripcio: this.form.descripcio,
+              data_creacio: this.form.data_creacio,
+              assignee: this.form.assignee,
+              tipus: this.form.tipus,
+              prioritat: this.form.prioritat,
+              status: this.form.status
+            },
+            {
+              headers: {
+                "content-type": "application/json",
+                authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+              }
+            }
+          ).then(response => {
+            //aquí hauríem de mirar de redirigir-nos a la pàgina detallada de l'issue creada
+            this.issue = response.data;
+            this.$router.push('/issues/' + response.data.id + '/')
+            return response.data;
+          });
     },
     onReset() {
       this.$router.push('/issues/' + this.$route.params.id + '/')
