@@ -8,7 +8,7 @@
         </h4>
         <h1>{{ issue.titol }}</h1>
         <p>
-          <b>{{ issue.creator }}</b>
+          <b>{{ getUsername(issue.creator) }}</b>
           created an issue on {{ issue.data_creacio }}
         </p>
         <p>{{ issue.descripcio }}</p>
@@ -35,7 +35,7 @@
           <div>
             <b-form-textarea
               id="textarea"
-              v-model="changeStatus.comentari"
+              v-model="changeStatus.statusComment"
               placeholder="Afegeix un comentari"
               rows="3"
               max-rows="6"
@@ -63,7 +63,7 @@
         <b-col class="mx-auto" v-for="comment in comments" :key="comment.id" :id="comment.id">
           <b-row>
             <p>
-              <b>{{ comment.owner }}</b>
+              <b>{{ getUsername(comment.owner) }}</b>
               <br />
               {{ comment.content }}
             </p>
@@ -99,7 +99,7 @@
               <b-button
                 type="button"
                 class="btn btn-success"
-                @click="editComment(comment.id, comment.content)"
+                @click="editComment(comment.id)"
               >Guarda</b-button>
             </div>
           </div>
@@ -119,7 +119,9 @@
               >{{ option }}</b-dropdown-item>
             </b-dropdown>
             <b-dropdown text="Més">
-              <b-dropdown-item>Adjunteu fitxer</b-dropdown-item>
+              <b-dropdown-item v-b-modal="'my-modal'">Adjunteu fitxer</b-dropdown-item>
+              <b-dropdown-item @click="editIssue">Edita</b-dropdown-item>
+              <b-dropdown-item @click="deleteIssue">Esborra</b-dropdown-item>
             </b-dropdown>
             <b-button href="#/issues" variant="primary">Inici</b-button>
           </b-button-group>
@@ -128,7 +130,7 @@
           <b-card>
             <b-card-text>
               <b>Assignat:</b>
-              {{ issue.assignee }}
+              {{ getUsername(issue.assignee) }}
               <br />
               <b>Tipus:</b>
               {{ issue.tipus }}
@@ -148,6 +150,30 @@
             </b-card-text>
           </b-card>
         </b-row>
+        <b-modal id="my-modal" title="Adjunteu un fitxer">
+          <div class="large-12 medium-12 small-12 cell">
+            <label>Fixer: 
+              <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+            </label>
+              <button v-on:click="postAdjunt()">Submit</button>
+          </div>
+
+            <!-- <b-form-file
+              v-model="file"
+              :state="Boolean(file)"
+              placeholder="Tria un fitxer..."
+              drop-placeholder="Arrossega'l fins aquí..."
+            ></b-form-file>
+            <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+            <template v-slot:modal-footer>
+              <div class="w-100">
+              <b-button type="submit" class="float-right" size="sm" variant="primary"  @click="postAdjunt">Pugeu el fitxer</b-button>
+              <b-button type="reset" class="float-right" size="sm" variant="secondary"  @click="show=false">Descartar</b-button>
+             </div>
+            </template> -->
+          
+        </b-modal>
+        
       </div>
     </div>
   </div>
@@ -169,12 +195,14 @@ export default {
         "NoFix",
         "Tancat"
       ],
+      users: [],
       commentcontentaux: "",
       selectedDelete: 0,
       changeStatus: {
         selectedStatus: "",
         statusComment: ""
       },
+      file: null,
       comentari: "", //camp per guardar el comentari quan toqui
       issue: {},
       // issue per testejar la gui, la que s'ha de fer servir es la que es diu 'issue' que s'obte amb request
@@ -182,6 +210,9 @@ export default {
     };
   },
   methods: {
+    handleFileUpload(){
+        this.file = this.$refs.file.files[0];
+      },
     getIssue: async function() {
       // hauria de posar aqui les credencials i tal
       await axios
@@ -203,6 +234,33 @@ export default {
         )
         .then(response => {
           this.comments = response.data;
+          return response.data;
+        });
+    },
+    postAdjunt: async function() {
+      // hauria de posar aqui les credencials i tal
+      let formData = new FormData();
+      formData.append('file', this.file);
+      var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+      var creacio = currentDateWithFormat;
+      await axios
+        .post(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/",
+          {
+            issue: this.$route.params.id,
+            data_creacio: creacio,
+            owner: 6,
+            data: formData
+          },
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+            }
+          }
+        )
+        .then(response => {
+          this.getComments();
           return response.data;
         });
     },
@@ -228,14 +286,20 @@ export default {
           return response.data;
         });
     },
-    editComment: async function(commentid, commentcontent) {
+    editComment: async function(commentid) {
+      var comment = this.comments.find(x => x.id === commentid);
+      comment.content = this.commentcontentaux;
       await axios
         .put(
           "http://asw-issue-tracker-2019.herokuapp.com/api/comment/" +
             commentid +
             "/",
           {
-            content: commentcontent
+            content: comment.content,
+            issue: this.$route.params.id,
+            adjunt: null,
+            data_creacio: comment.data_creacio,
+            owner: 6
           },
           {
             headers: {
@@ -246,6 +310,7 @@ export default {
         )
         .then(response => {
           this.getComments();
+          this.hideEditComment(commentid);
           return response.data;
         });
     },
@@ -271,6 +336,12 @@ export default {
           this.$route.params.id +
           "/",
         {
+          titol: this.issue.titol,
+          descripcio: this.issue.descripcio,
+          data_creacio: this.issue.data_creacio,
+          assignee: this.issue.assignee,
+          tipus: this.issue.tipus,
+          prioritat: this.issue.prioritat,
           status: this.changeStatus.selectedStatus
         },
         {
@@ -301,16 +372,39 @@ export default {
           }
         }
       );
-
       this.resetStatusComment();
       this.getIssue();
+      this.getComments();
+    },
+    getUsers: async function() {
+      await axios
+        .get("http://asw-issue-tracker-2019.herokuapp.com/api/user/")
+        .then(response => {
+          this.users = response.data;
+          return response.data;
+        });
+    },
+    deleteIssue: async function() {
+      await axios.delete(
+        "http://asw-issue-tracker-2019.herokuapp.com/api/issues/" +
+          this.$route.params.id,
+        {
+          headers: {
+            authorization: "Token 05a9b35f3fc99505ad75a9a6eb236771a301f613"
+          }
+        }
+      );
+      this.$router.push("/issues/");
+    },
+    editIssue: function() {
+      this.$router.push("/issues/" + this.$route.params.id + "/edit/");
     },
     /*  MODAL TOGGLE  */
     confirmDelete: function(cid) {
       this.selectedDelete = cid;
     },
     commentStatus: function(option) {
-      this.changeStatus.status = option;
+      this.changeStatus.selectedStatus = option;
       this.$bvModal.show("modalStatus");
     },
     resetStatusComment: function() {
@@ -322,15 +416,19 @@ export default {
       document.getElementById("elem" + commentid).style.display = "block";
       this.commentcontentaux = c;
     },
-    hideEditComment: function() {
-      var commentid = event.currentTarget.getAttribute("id");
+    hideEditComment: function(commentid) {
       document.getElementById("elem" + commentid).style.display = "none";
       this.commentcontentaux = "";
+    },
+    getUsername: function(uid) {
+      var user = this.users.find(x => x.id === uid);
+      return user.username;
     }
   },
   mounted() {
     this.getIssue();
     this.getComments();
+    this.getUsers();
   }
 };
 </script>
