@@ -5,9 +5,11 @@
      <h1>Issue Tracker</h1>
       </div>
       <div class="col-xl-4 offset-xl-9">
-        <b-button href='#/issues/new'> Nova Issue</b-button>
         <b-button variant="primary" v-if="haveToken" v-on:click="authenticate('google')">Log In</b-button>
-        <b-button variant="primary" v-else v-on:click="logout()">Log Out</b-button>
+        <div v-else>
+        <b-button variant="primary" v-on:click="logout()">Log Out</b-button>
+        <b-button href='#/issues/new' > Nova Issue</b-button>
+        </div>
       </div> 
     </div> 
         <b-button-toolbar>
