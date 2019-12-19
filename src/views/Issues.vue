@@ -17,8 +17,8 @@
           <b-button-group class="mx-1">
             <b-button v-on:click="getIssues">Totes</b-button>
             <b-button v-on:click="getFilter('Nou')">Obertes</b-button>
-            <b-button v-on:click="getMyIssues()">Les meves issues</b-button>
-            <b-button v-on:click="getMyWatching()">Observant</b-button>
+            <b-button v-if="haveToken == false" v-on:click="getMyIssues()">Les meves issues</b-button>
+            <b-button v-if="haveToken == false" v-on:click="getMyWatching()">Observant</b-button>
           </b-button-group>
         </b-button-toolbar>
       <h5>Issues:</h5>
