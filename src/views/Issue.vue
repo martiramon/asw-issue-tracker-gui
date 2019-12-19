@@ -70,12 +70,9 @@
             </p>
             
           </b-row>
-          <!-- <div v-if="comment.adjunt !== null">
-                {{ getAdjunt(comment.adjunt) }}
-                <div v-if="comment.adjunt === adjunt.id">
-                  {{adjunt.data}}
-                </div>
-          </div> -->
+          <div v-if="comment.adjunt !== null">
+                <a :href="getDades(comment.adjunt)">{{ getDades(comment.adjunt) }} </a>
+          </div>
           <b-row>
             <!-- user-only visible content-->
             <button
@@ -359,17 +356,15 @@ export default {
           return response.data;
         });
     },
-    getAdjunt: async function(id) {
+    getAdjunts: async function() {
       await axios
         .get(
-          "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/" +
-            id
+          "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/"
         )
         .then(response => {
-          this.adjunts.push({id: response.data.id, data: response.data.data});
+          this.adjunts = response.data;
           return response.data;
         });
-      return this.adjunts;
     },
     getComments: async function() {
       await axios
@@ -608,11 +603,16 @@ export default {
     getUsername: function(uid) {
       var user = this.users.find(x => x.id === uid);
       return user.username;
+    },
+    getDades: function(uid) {
+      var dada = this.adjunts.find(x => x.id === uid);
+      return dada.data;
     }
   },
   mounted() {
     this.getIssue();
     this.getComments();
+    this.getAdjunts();
     this.getUsers();
   }
 };
