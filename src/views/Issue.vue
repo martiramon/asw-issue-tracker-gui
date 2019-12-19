@@ -431,6 +431,7 @@ export default {
       );
       this.resetStatusComment();
       this.getIssue();
+      this.getAdjunts();
       this.getComments();
     },
     postComment: async function() {
