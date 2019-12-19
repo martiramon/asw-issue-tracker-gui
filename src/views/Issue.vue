@@ -339,6 +339,7 @@ export default {
         });
     },
     postAdjunt: async function() {
+      this.$bvModal.hide("my-modal");
       token = localStorage.getItem('vue-authenticate.vueauth_token');
       var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
       var creacio = currentDateWithFormat;
@@ -363,9 +364,31 @@ export default {
           }
         )
         .then(response => {
-          this.getComments();
+          this.file = response.data;
           return response.data;
         });
+
+
+        let comentari =
+        "S'ha adjuntat un nou fitxer:"
+      // push comment
+      await axios.post(
+        "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
+        {
+          issue: this.$route.params.id,
+          content: comentari,
+          adjunt: this.file.id
+        },
+        {
+          headers: {
+            "content-type": "application/json",
+            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+          }
+        }
+      );
+      this.resetStatusComment();
+      this.getIssue();
+      this.getComments();
     },
     postComment: async function() {
       // hauria de posar aqui les credencials i tal
