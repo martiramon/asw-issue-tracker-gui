@@ -96,7 +96,7 @@
                 type="button"
                 class="btn btn-primary mr-3"
                 :id="comment.id"
-                @click="hideEditComment()"
+                @click="hideEditComment(comment.id)"
               >Cancela</b-button>
               <b-button
                 type="button"
@@ -144,32 +144,30 @@
               {{ issue.status }}
               <br />
               <b>Vots:</b>
-                {{ issue.vote_set.length }} 
-                <b-button variant="secondary" v-if="isVoted() < 0" v-on:click="vote()">Vote</b-button>
-                <b-button variant="secondary" v-else v-on:click="unvote()">Unvote</b-button>                
+              {{ issue.vote_set.length }}
+              <b-button variant="secondary" v-if="isVoted() < 0" v-on:click="vote()">Vote</b-button>
+              <b-button variant="secondary" v-else v-on:click="unvote()">Unvote</b-button>
               <br />
               <b>Watchers:</b>
-                {{ issue.watch_set.length }} 
-                <b-button variant="secondary" v-if="isWatched() < 0" v-on:click="watch()">Watch</b-button>
-                <b-button variant="secondary" v-else v-on:click="unwatch()">Unwatch</b-button>
+              {{ issue.watch_set.length }}
+              <b-button variant="secondary" v-if="isWatched() < 0" v-on:click="watch()">Watch</b-button>
+              <b-button variant="secondary" v-else v-on:click="unwatch()">Unwatch</b-button>
               <br />
             </b-card-text>
           </b-card>
         </b-row>
         <b-modal id="my-modal" title="Adjunteu un fitxer">
           <div class="large-12 medium-12 small-12 cell">
-             <form>
-                  <div class="form-group">
-                       <input type="file" class="form-control-file" id="attachmentUploadIssue">
-                  </div>
-              </form>
+            <form>
+              <div class="form-group">
+                <input type="file" class="form-control-file" id="attachmentUploadIssue" />
+              </div>
+            </form>
           </div>
           <template v-slot:modal-footer>
-                    <b-button variant="primary" data-dismiss="modal" v-on:click="postAdjunt">Adjunteu fitxer</b-button>
-              </template>
-          </b-modal>
-        
-        
+            <b-button variant="primary" data-dismiss="modal" v-on:click="postAdjunt">Adjunteu fitxer</b-button>
+          </template>
+        </b-modal>
       </div>
     </div>
   </div>
@@ -177,13 +175,12 @@
 
 <script>
 import axios from "axios";
-import VueJwtDecode from 'vue-jwt-decode';
-let token = localStorage.getItem('vue-authenticate.vueauth_token');
-import 'jquery';
-import $ from 'jquery';
+import VueJwtDecode from "vue-jwt-decode";
+let token = localStorage.getItem("vue-authenticate.vueauth_token");
+import "jquery";
+import $ from "jquery";
 
 export default {
-
   data() {
     return {
       status: [
@@ -198,7 +195,7 @@ export default {
       ],
       componentKey: 0,
       users: [],
-      mytoken: localStorage.getItem('vue-authenticate.vueauth_token'),
+      mytoken: localStorage.getItem("vue-authenticate.vueauth_token"),
       commentcontentaux: "",
       selectedDelete: 0,
       changeStatus: {
@@ -218,12 +215,14 @@ export default {
         .post(
           "http://asw-issue-tracker-2019.herokuapp.com/api/vote/",
           {
-            issue: this.$route.params.id,
+            issue: this.$route.params.id
           },
           {
             headers: {
               "content-type": "application/json",
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -237,10 +236,14 @@ export default {
       let test_id = this.isVoted();
       await axios
         .delete(
-          "http://asw-issue-tracker-2019.herokuapp.com/api/vote/" + test_id + "/",
+          "http://asw-issue-tracker-2019.herokuapp.com/api/vote/" +
+            test_id +
+            "/",
           {
             headers: {
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -255,12 +258,14 @@ export default {
         .post(
           "http://asw-issue-tracker-2019.herokuapp.com/api/watch/",
           {
-            issue: this.$route.params.id,
+            issue: this.$route.params.id
           },
           {
             headers: {
               "content-type": "application/json",
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -274,10 +279,14 @@ export default {
       let test_id = this.isWatched();
       await axios
         .delete(
-          "http://asw-issue-tracker-2019.herokuapp.com/api/watch/" + test_id + "/",
+          "http://asw-issue-tracker-2019.herokuapp.com/api/watch/" +
+            test_id +
+            "/",
           {
             headers: {
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -287,35 +296,41 @@ export default {
           return response.data;
         });
     },
-    isVoted(){
+    isVoted() {
       let test = -1;
-      this.issue.vote_set.forEach(function(item){ 
-        if (token != null && item.voter === VueJwtDecode.decode(token).user_id){
-          test = item.id
+      this.issue.vote_set.forEach(function(item) {
+        if (
+          token != null &&
+          item.voter === VueJwtDecode.decode(token).user_id
+        ) {
+          test = item.id;
         }
       });
       return test;
     },
-    isWatched(){
+    isWatched() {
       let test = -1;
-      this.issue.watch_set.forEach(function(item){ 
-        if (token != null && item.watcher === VueJwtDecode.decode(token).user_id){
-          test = item.id
+      this.issue.watch_set.forEach(function(item) {
+        if (
+          token != null &&
+          item.watcher === VueJwtDecode.decode(token).user_id
+        ) {
+          test = item.id;
         }
       });
 
       return test;
     },
-    getUserId(){
+    getUserId() {
       let id = -1;
       if (this.mytoken != null) {
-        id = VueJwtDecode.decode(this.mytoken).user_id
-      } 
+        id = VueJwtDecode.decode(this.mytoken).user_id;
+      }
       return id;
     },
-    handleFileUpload(){
-        this.file = this.$refs.file.files[0];
-      },
+    handleFileUpload() {
+      this.file = this.$refs.file.files[0];
+    },
     getIssue: async function() {
       await axios
         .get(
@@ -340,26 +355,31 @@ export default {
     },
     postAdjunt: async function() {
       this.$bvModal.hide("my-modal");
-      token = localStorage.getItem('vue-authenticate.vueauth_token');
-      var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+      token = localStorage.getItem("vue-authenticate.vueauth_token");
+      var currentDateWithFormat = new Date()
+        .toJSON()
+        .slice(0, 10)
+        .replace(/-/g, "-");
       var creacio = currentDateWithFormat;
       let formData = new FormData();
-      var issueAttachment = $('#attachmentUploadIssue').prop('files')[0];
-      formData.append('issue', this.$route.params.id);
-      formData.append('data_creacio', creacio);
+      var issueAttachment = $("#attachmentUploadIssue").prop("files")[0];
+      formData.append("issue", this.$route.params.id);
+      formData.append("data_creacio", creacio);
       if (token != null) {
-        formData.append('owner', VueJwtDecode.decode(token).user_id);
+        formData.append("owner", VueJwtDecode.decode(token).user_id);
       }
       //formData.append('file', this.file);
-      formData.append('data', issueAttachment);
+      formData.append("data", issueAttachment);
       await axios
         .post(
           "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/",
           formData,
           {
             headers: {
-              'Content-Type': 'multipart/form-data',
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              "Content-Type": "multipart/form-data",
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -368,9 +388,7 @@ export default {
           return response.data;
         });
 
-
-        let comentari =
-        "S'ha adjuntat un nou fitxer:"
+      let comentari = "S'ha adjuntat un nou fitxer:";
       // push comment
       await axios.post(
         "http://asw-issue-tracker-2019.herokuapp.com/api/comment/",
@@ -382,7 +400,8 @@ export default {
         {
           headers: {
             "content-type": "application/json",
-            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            authorization:
+              "Bearer " + localStorage.getItem("vue-authenticate.vueauth_token")
           }
         }
       );
@@ -403,7 +422,9 @@ export default {
           {
             headers: {
               "content-type": "application/json",
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -430,7 +451,9 @@ export default {
           {
             headers: {
               "content-type": "application/json",
-              authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+              authorization:
+                "Bearer " +
+                localStorage.getItem("vue-authenticate.vueauth_token")
             }
           }
         )
@@ -447,7 +470,8 @@ export default {
           this.selectedDelete,
         {
           headers: {
-            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            authorization:
+              "Bearer " + localStorage.getItem("vue-authenticate.vueauth_token")
           }
         }
       );
@@ -473,7 +497,8 @@ export default {
         {
           headers: {
             "content-type": "application/json",
-            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            authorization:
+              "Bearer " + localStorage.getItem("vue-authenticate.vueauth_token")
           }
         }
       );
@@ -494,7 +519,8 @@ export default {
         {
           headers: {
             "content-type": "application/json",
-            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            authorization:
+              "Bearer " + localStorage.getItem("vue-authenticate.vueauth_token")
           }
         }
       );
@@ -516,7 +542,8 @@ export default {
           this.$route.params.id,
         {
           headers: {
-            authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
+            authorization:
+              "Bearer " + localStorage.getItem("vue-authenticate.vueauth_token")
           }
         }
       );
