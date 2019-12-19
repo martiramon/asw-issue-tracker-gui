@@ -67,8 +67,14 @@
               <br />
               {{ comment.content }}
             </p>
+            
           </b-row>
-
+          <!-- <div v-if="comment.adjunt !== null">
+                {{ getAdjunt(comment.adjunt) }}
+                <div v-if="comment.adjunt === adjunt.id">
+                  {{adjunt.data}}
+                </div>
+          </div> -->
           <b-row>
             <!-- user-only visible content-->
             <button
@@ -208,6 +214,7 @@ export default {
       file: null,
       comentari: "", //camp per guardar el comentari quan toqui
       issue: {},
+      adjunts: [],
       // issue per testejar la gui, la que s'ha de fer servir es la que es diu 'issue' que s'obte amb request
       comments: []
     };
@@ -326,6 +333,18 @@ export default {
           this.issue = response.data;
           return response.data;
         });
+    },
+    getAdjunt: async function(id) {
+      await axios
+        .get(
+          "http://asw-issue-tracker-2019.herokuapp.com/api/adjunts/" +
+            id
+        )
+        .then(response => {
+          this.adjunts.push({id: response.data.id, data: response.data.data});
+          return response.data;
+        });
+      return this.adjunts;
     },
     getComments: async function() {
       await axios
@@ -497,7 +516,10 @@ export default {
             authorization: "Bearer " + localStorage.getItem('vue-authenticate.vueauth_token')
           }
         }
-      );
+      ).then(response => {
+          this.getComments();
+          return response.data;
+        });
       this.resetStatusComment();
       this.getIssue();
       this.getComments();
