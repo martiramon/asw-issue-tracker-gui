@@ -1,4 +1,15 @@
-# asw-issue-tracker-gui
+# ASW-Issue-Tracker-GUI
+Issue Tracker implementation for 'Aplicaccions i serveis web'
+
+### Link: http://foodlord.tk:8080
+
+# Membres del grup
+
+* Guillermo Ezcurra
+* Aina Garcia
+* Martí Ramon
+* Andreu Gallofré
+___
 
 ## Project setup
 ```
