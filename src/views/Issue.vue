@@ -18,12 +18,13 @@
         <b-row>
           <b-col>
             <b-form class="mx-auto" @submit="postComment">
-              <b-form-textarea placeholder="Escriu aquí el teu comentari" v-model="comentari" />
+              <b-form-textarea v-if="haveToken==false" placeholder="Escriu aquí el teu comentari" v-model="comentari" />
               <div class="mt-3 float-right">
                 <button
                   class="btn btn-primary mb-3"
                   type="primary"
                   native-type="submit"
+                  v-if="haveToken==false"
                 >Save changes</button>
               </div>
             </b-form>
@@ -120,7 +121,7 @@
                 @click="commentStatus(option)"
               >{{ option }}</b-dropdown-item>
             </b-dropdown>
-            <b-dropdown text="Més">
+            <b-dropdown v-if="haveToken==false" text="Més">
               <b-dropdown-item v-b-modal="'my-modal'">Adjunteu fitxer</b-dropdown-item>
               <b-dropdown-item v-if="getUserId() == issue.creator" @click="editIssue">Edita</b-dropdown-item>
               <b-dropdown-item v-if="getUserId() == issue.creator" @click="deleteIssue">Esborra</b-dropdown-item>
@@ -145,13 +146,17 @@
               <br />
               <b>Vots:</b>
               {{ issue.vote_set.length }}
+              <div v-if="haveToken == false">
               <b-button variant="secondary" v-if="isVoted() < 0" v-on:click="vote()">Vote</b-button>
               <b-button variant="secondary" v-else v-on:click="unvote()">Unvote</b-button>
+              </div>
               <br />
               <b>Watchers:</b>
               {{ issue.watch_set.length }}
+              <div v-if="haveToken == false">
               <b-button variant="secondary" v-if="isWatched() < 0" v-on:click="watch()">Watch</b-button>
               <b-button variant="secondary" v-else v-on:click="unwatch()">Unwatch</b-button>
+              </div>
               <br />
             </b-card-text>
           </b-card>
@@ -181,6 +186,11 @@ import "jquery";
 import $ from "jquery";
 
 export default {
+  computed: {
+      haveToken() {
+        return token == null;
+      }
+  },
   data() {
     return {
       status: [
