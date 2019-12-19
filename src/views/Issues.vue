@@ -45,6 +45,10 @@
           <!-- `data.value` is the value after formatted by the Formatter -->
           <a :href="`#/issues/`" @click="getFilter(data.item.data_creacio)" >{{ data.value }}</a>
         </template>
+        <template v-slot:cell(assignee)="data">
+          <!-- `data.value` is the value after formatted by the Formatter -->
+          <a :href="`#/issues/`" @click="getAssignee(data.item.assignee)" >{{ data.value }}</a>
+        </template>
       </b-table>
   </div>
 </template>
@@ -209,6 +213,18 @@ let token = localStorage.getItem('vue-authenticate.vueauth_token');
       this.issues = issues2;
       this.$$refs.table.refresh();
     },
+    getAssignee: async function(value) {
+      await this.getIssues();
+      var size = Object.keys(this.issues).length;
+      var i = 0;
+      var issues2 = [];
+      while(i < size) {
+        if (this.issues[i].assignee == value) issues2.push(this.issues[i])
+        i++;
+      }
+      this.issues = issues2;
+      this.$$refs.table.refresh();
+    }
   },
   mounted() {
     this.getIssues();
