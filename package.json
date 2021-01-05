@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@vue/eslint-config-standard": "^5.0.1",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bootstrap-vue": "^2.1.0",
     "core-js": "^3.4.3",
     "jquery": "^3.4.1",
